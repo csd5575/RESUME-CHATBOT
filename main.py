@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 
 # Ονομα application
 chatbot = FastAPI()
@@ -27,3 +28,23 @@ resumeData = {
     "hobbies" : "Studying various subjects,reading comics, playing video games and watching movies"
 }
 
+class Question(BaseModel):
+    prompt : str
+
+# Δηλωνουμε ενα post request το οποιο θα επιστρεφει αναλογη απαντηση στην ερωτηση του χρηστηη
+@chatbot.post("/chat")
+def get(question: Question):
+    q = question.prompt.lower()
+
+    if "projects" in q:
+        return {"reply" : resumeData["projects"]}
+    elif "education" in q:
+        return {"reply" : resumeData["education"]}
+    elif "skills" in q:
+        return {"reply" : resumeData["skills"]}
+    elif "hobbies" in q:
+        return {"reply" : resumeData["hobbies"]}
+    elif "experience" in q:
+        return {"reply" : resumeData["experience"]}
+    else:
+        return {"reply" : "Sorry but i couldn't find any matches.Feel free to ask about my projects,education or skills"}
