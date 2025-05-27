@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>RESUME</title>
+  <style>
+    body {
+    font-family: Arial;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background-image:url("../pexels-danny-meneses-340146-943096.jpg");
+    background-size:cover;
+    background-repeat:no-repeat;
+    background-attachment:fixed;
+    transition: background-image 1s ease-in-out;
+    }
+    // Sets all the h1 headings' color to blue
+    h1 {
+      color: blue;
+    }
+    #chat {
+    border: 3px solid #ccc; height: 300px; overflow-y: scroll; padding: 10px; background-color:cyan}
+    .user { color: magenta; }
+    .bot { color: black; }
+
+    #question-boxes {
+    margin: 10px 0;
+    }
+    .question-btn {
+    margin: 5px; padding: 8px; color: red;background: #f0f0f0; border: none; cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>RESUME CHATBOT</h1>
+  <div id="chat"></div>
+
+
+  <div id="question-boxes">
+    <button class="question-btn" onclick="askQuestion('What is your education?')">Education</button>
+    <button class="question-btn" onclick="askQuestion('What is your experience?')">Experience</button>
+    <button class="question-btn" onclick="askQuestion('What skills do you have?')">Skills</button>
+    <button class="question-btn" onclick="askQuestion('Do you have any hobbies?')">Hobbies</button>
+    <button class="question-btn" onclick="askQuestion('What projects have you made?')">Projects</button>
+  </div>
+
+  <input id="input" type="text">
+  <button onclick="sendMessage()">Ask</button>
+
+  <script>
+    async function askQuestion(question) {
+    // First we display the question on the screen
+      displayMessage(question, "user");
+    // Then we wait a response from the backend
+       const response = await fetch("http://localhost:8001/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: question })
+      });
+
+      const data = await response.json();
+      displayMessage(data.reply, "bot");
+    }
+
+    // We define a function for the manual input
+    function sendMessage() {
+      const input = document.getElementById("input");
+      askQuestion(input.value);
+      input.value = "";
+    }
+
+    // We also define a function to display the message
+    function displayMessage(text, sender) {
+      const chat = document.getElementById("chat");
+      const message = document.createElement("div");
+      message.className = sender;
+      message.textContent = text;
+      chat.appendChild(message);
+    }
+  </script>
+</body>
+</html>
